@@ -49,15 +49,16 @@ function MaybeIframe( { children, contentRef, shouldIframe, styles, style } ) {
 	if ( ! shouldIframe ) {
 		return (
 			<>
-				<EditorStyles styles={ styles } />
-				<WritingFlow
-					ref={ contentRef }
-					className="editor-styles-wrapper"
-					style={ { flex: '1', ...style } }
-					tabIndex={ -1 }
-				>
-					{ children }
-				</WritingFlow>
+				<EditorStyles styles={ styles }>
+					<WritingFlow
+						ref={ contentRef }
+						className="editor-styles-wrapper"
+						style={ { flex: '1', ...style } }
+						tabIndex={ -1 }
+					>
+						{ children }
+					</WritingFlow>
+				</EditorStyles>
 			</>
 		);
 	}
@@ -69,8 +70,7 @@ function MaybeIframe( { children, contentRef, shouldIframe, styles, style } ) {
 			style={ { width: '100%', height: '100%', display: 'block' } }
 			name="editor-canvas"
 		>
-			<EditorStyles styles={ styles } />
-			{ children }
+			<EditorStyles styles={ styles }>{ children }</EditorStyles>
 		</Iframe>
 	);
 }
@@ -101,7 +101,7 @@ function getPostContentAttributes( blocks ) {
 	}
 }
 
-export default function VisualEditor() {
+export default function VisualEditor( { styles } ) {
 	const {
 		deviceType,
 		isWelcomeGuideVisible,
@@ -313,8 +313,9 @@ export default function VisualEditor() {
 		titleRef?.current?.focus();
 	}, [ isWelcomeGuideVisible, isCleanNewPost ] );
 
-	const styles = useMemo(
+	styles = useMemo(
 		() => [
+			...styles,
 			{
 				// We should move this in to future to the body.
 				css:
@@ -324,7 +325,7 @@ export default function VisualEditor() {
 						: '' ),
 			},
 		],
-		[ paddingBottom ]
+		[ styles, paddingBottom ]
 	);
 
 	// Add some styles for alignwide/alignfull Post Content and its children.

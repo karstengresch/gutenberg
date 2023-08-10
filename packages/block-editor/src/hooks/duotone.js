@@ -15,8 +15,7 @@ import {
 } from '@wordpress/blocks';
 import { createHigherOrderComponent, useInstanceId } from '@wordpress/compose';
 import { addFilter } from '@wordpress/hooks';
-import { useMemo, useEffect } from '@wordpress/element';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useMemo, useEffect, useContext } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -37,7 +36,7 @@ import { scopeSelector } from '../components/global-styles/utils';
 import { useBlockSettings } from './utils';
 import { default as StylesFiltersPanel } from '../components/global-styles/filters-panel';
 import { useBlockEditingMode } from '../components/block-editing-mode';
-import { store as blockEditorStore } from '../store';
+import { updateStyleContext } from '../components/editor-styles';
 
 const EMPTY_ARRAY = [];
 
@@ -221,27 +220,11 @@ const withDuotoneControls = createHigherOrderComponent(
 	'withDuotoneControls'
 );
 
-function addStyle( styles, style ) {
-	let i = styles.length;
-	while ( i-- ) {
-		if ( styles[ i ].id === style.id ) {
-			styles[ i ] = style;
-			return styles;
-		}
-	}
-
-	styles.push( style );
-	return styles;
-}
-
 function DuotoneStyles( {
 	id: filterId,
 	selector: duotoneSelector,
 	attribute: duotoneAttr,
 } ) {
-	const { getSettings } = useSelect( blockEditorStore );
-	const { updateSettings } = useDispatch( blockEditorStore );
-
 	const duotonePalette = useMultiOriginPresets( {
 		presetSetting: 'color.duotone',
 		defaultSetting: 'color.defaultDuotone',
@@ -289,11 +272,12 @@ function DuotoneStyles( {
 
 	const isValidFilter = Array.isArray( colors ) || colors === 'unset';
 
-	useEffect( () => {
-		const settings = getSettings();
-		const styles = [ ...settings.styles ];
+	const updateStyle = useContext( updateStyleContext );
 
-		addStyle( styles, {
+	useEffect( () => {
+		if ( ! isValidFilter ) return;
+
+		const clearStyle = updateStyle( {
 			id: filterId,
 			css:
 				colors !== 'unset'
@@ -301,25 +285,18 @@ function DuotoneStyles( {
 					: getDuotoneUnsetStylesheet( selector ),
 			__unstableType: 'presets',
 		} );
-		addStyle( styles, {
+		const clearFilter = updateStyle( {
 			id: `duotone-${ filterId }`,
 			assets:
 				colors !== 'unset' ? getDuotoneFilter( filterId, colors ) : '',
 			__unstableType: 'svgs',
 		} );
 
-		updateSettings( {
-			...settings,
-			styles,
-		} );
-	}, [
-		getSettings,
-		updateSettings,
-		isValidFilter,
-		selector,
-		filterId,
-		colors,
-	] );
+		return () => {
+			clearStyle();
+			clearFilter();
+		};
+	}, [ isValidFilter, colors, selector, filterId, updateStyle ] );
 
 	return null;
 }

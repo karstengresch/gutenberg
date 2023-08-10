@@ -40,14 +40,15 @@ export default function WidgetAreasBlockEditorContent( {
 			<Notices />
 			<BlockTools>
 				<KeyboardShortcuts />
-				<EditorStyles styles={ styles } />
-				<BlockSelectionClearer>
-					<WritingFlow>
-						<ObserveTyping>
-							<BlockList className="edit-widgets-main-block-list" />
-						</ObserveTyping>
-					</WritingFlow>
-				</BlockSelectionClearer>
+				<EditorStyles styles={ styles }>
+					<BlockSelectionClearer>
+						<WritingFlow>
+							<ObserveTyping>
+								<BlockList className="edit-widgets-main-block-list" />
+							</ObserveTyping>
+						</WritingFlow>
+					</BlockSelectionClearer>
+				</EditorStyles>
 			</BlockTools>
 		</div>
 	);

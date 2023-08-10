@@ -115,16 +115,17 @@ export default function SidebarBlockEditor( {
 
 				<CopyHandler>
 					<BlockTools>
-						<EditorStyles styles={ settings.defaultEditorStyles } />
-						<BlockSelectionClearer>
-							<WritingFlow className="editor-styles-wrapper">
-								<ObserveTyping>
-									<BlockList
-										renderAppender={ BlockAppender }
-									/>
-								</ObserveTyping>
-							</WritingFlow>
-						</BlockSelectionClearer>
+						<EditorStyles styles={ settings.defaultEditorStyles }>
+							<BlockSelectionClearer>
+								<WritingFlow className="editor-styles-wrapper">
+									<ObserveTyping>
+										<BlockList
+											renderAppender={ BlockAppender }
+										/>
+									</ObserveTyping>
+								</WritingFlow>
+							</BlockSelectionClearer>
+						</EditorStyles>
 					</BlockTools>
 				</CopyHandler>
 
