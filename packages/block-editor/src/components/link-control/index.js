@@ -21,7 +21,7 @@ import { isShallowEqualObjects } from '@wordpress/is-shallow-equal';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { store as preferencesStore } from '@wordpress/preferences';
 import { useInstanceId } from '@wordpress/compose';
-
+import { speak } from '@wordpress/a11y';
 /**
  * Internal dependencies
  */
@@ -207,11 +207,24 @@ function LinkControl( {
 	const { createPage, isCreatingPage, errorMessage } =
 		useCreatePage( createSuggestion );
 
+	function setEditingMode( nextEditingMode ) {
+		setIsEditingLink( nextEditingMode );
+
+		speak(
+			nextEditingMode
+				? __( 'Entering link edit mode' )
+				: __( 'Leaving link edit mode' ),
+			'assertive'
+		);
+	}
+
 	useEffect( () => {
 		if ( forceIsEditingLink === undefined ) {
 			return;
 		}
 
+		// Do not announcement automattic mode state change
+		// via speak().
 		setIsEditingLink( forceIsEditingLink );
 	}, [ forceIsEditingLink ] );
 
@@ -249,7 +262,7 @@ function LinkControl( {
 			wrapperNode.current.ownerDocument.activeElement
 		);
 
-		setIsEditingLink( false );
+		setEditingMode( false );
 	};
 
 	const handleSelectSuggestion = ( updatedValue ) => {
@@ -439,7 +452,7 @@ function LinkControl( {
 					<LinkPreview
 						key={ value?.url } // force remount when URL changes to avoid race conditions for rich previews
 						value={ value }
-						onEditClick={ () => setIsEditingLink( true ) }
+						onEditClick={ () => setEditingMode( true ) }
 						hasRichPreviews={ hasRichPreviews }
 						hasUnlinkControl={ shownUnlinkControl }
 						additionalControls={ () => {
@@ -464,7 +477,7 @@ function LinkControl( {
 						} }
 						onRemove={ () => {
 							onRemove();
-							setIsEditingLink( true );
+							setEditingMode( true );
 						} }
 					/>
 				</>
