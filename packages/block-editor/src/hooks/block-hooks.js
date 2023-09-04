@@ -188,9 +188,6 @@ function BlocksHooksControl( props ) {
 						<Fragment key={ vendor }>
 							<h3>{ vendor }</h3>
 							{ groupedHookedBlocks[ vendor ].map( ( block ) => {
-								// TODO: Display block icon.
-								// <BlockIcon icon={ block.icon } />
-
 								const checked =
 									block.name in hookedBlockClientIds;
 
