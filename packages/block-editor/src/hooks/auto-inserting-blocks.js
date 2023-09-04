@@ -21,7 +21,7 @@ import { store as blockEditorStore } from '../store';
 
 const EMPTY_OBJECT = {};
 
-function AutoInsertingBlocksControl( props ) {
+function BlocksHooksControl( props ) {
 	const blockTypes = useSelect(
 		( select ) => select( blocksStore ).getBlockTypes(),
 		[]
@@ -254,7 +254,7 @@ export const withAutoInsertingBlocks = createHigherOrderComponent(
 			return (
 				<>
 					{ blockEdit }
-					<AutoInsertingBlocksControl
+					<BlocksHooksControl
 						blockName={ props.name }
 						clientId={ props.clientId }
 					/>
